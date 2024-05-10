@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <title>Invoice Maker</title>
+</head>
+<body style="padding: 20px;" class="dropdown" data-bs-theme="dark">
+    <form action="/generate-pdf" method="POST">
+        <div class='row' style="margin-bottom: 24px;">
+            <div class='col-md-4'>
+                <h5 class='text-success fs-2'>Invoice Details</h5>
+                <div class='form-group'>
+                    <label>Invoice No</label>
+                    <input type='text' name='invoice_no' id='invoice_no' required class='form-control'>
+                </div>
+                <div class='form-group'>
+                    <label>Invoice Date</label>
+                    <input type='text' name='invoice_date' id='datepicker' required class='form-control'>
+                </div>
+                <div class='form-group'>
+                    <label>Work Order No</label>
+                    <select name='work_order' id='work_order' class='form-control'>
+                        <option value='work_order_1'>Work Order 1</option>
+                        <option value='work_order_2'>Work Order 2</option>
+                        <option value='work_order_3'>Work Order 3</option>
+                    </select>
+                </div>
+                <div class='form-group'>
+                    <label>Work Date</label>
+                    <input type='text' name='work_date' id='work_date' required class='form-control'>
+                </div>
+                <div class='form-group'>
+                    <label>Work Order Number</label>
+                    <input type='text' name='work_order_number' id='work_order_number' class='form-control' readonly>
+                </div>
+            </div>
+            
+            
+            <div class='col-md-8'>
+                <h5 class='text-success fs-2'>Customer Details</h5>
+                <div class='form-group'>
+                    <label>Name</label>
+                    <select name='cname' id='customer_name' class='form-control'>
+                        <option value='Nyati Builders Pvt Ltd.'>Nyati Builders Pvt Ltd.</option>
+                        <option value='Mihir Homes Enterprise LLP'>Mihir Homes Enterprise LLP</option>
+                        <option value='customer_3'>Customer 3</option>
+                    </select>
+                </div>
+                <div class='form-group'>
+                    <label>Address</label>
+                    <input type='text' name='caddress' id='caddress' required class='form-control' readonly>
+                </div>
+                <div class='form-group'>
+                    <label>GSTIN</label>
+                    <input type='text' name='cgst' id='cgst' required class='form-control' readonly>
+                </div>
+                <div class='form-group'>
+                    <label>State</label>
+                    <input type='text' name='cstate' id='cstate' required class='form-control' readonly>
+                </div>
+                <div class='form-group'>
+                    <label>HSN Description</label>
+                    <input type='text' name='chsn' id='chsn' required class='form-control' readonly>
+                </div>
+                <div class='form-group'>
+                    <label>PAN No</label>
+                    <input type='text' name='cpan' id='cpan' required class='form-control' readonly>
+                </div>
+            </div>
+            
+
+
+           
+<div class='col-md-12'>
+    <h5 class='text-success fs-2'>Site Details</h5>
+    <div class='form-group'>
+        <label>Site Name</label>
+        <select name='site_name' id='site_name' class='form-control'>
+            <option value='NYATI EMERALD I'>NYATI EMERALD I</option>
+            <option value='NYATI EQUINOX I'>NYATI EQUINOX I</option>
+            <option value='site_3'>Site 3</option>
+        </select>
+    </div>
+    <div class='form-group'>
+        <label>Site Address</label>
+        <input type='text' name='site_address' id='site_address' required class='form-control' readonly>
+    </div>
+</div>
+
+        </div>
+        <table class='table table-bordered'>
+            <thead>
+                <tr>
+                    <th>Sr.no</th>
+                    <th>Description of Service</th>
+                    <th>SAC No</th>
+                    <th>Unit</th>
+                    <th>Quantity</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="productRows">
+                <tr>
+                    <td><input  class='form-control'type="number" name="sr_no[]" id="" required></td>
+                    <td><textarea class='form-control' name="productName[]" rows="2" required onkeydown="if(event.keyCode===13){event.preventDefault();moveCursor(this, 1);}"></textarea></td>
+                    <td><input type="text" class='form-control' name="sacNo[]" required></td>
+                    <td><input type='text' value="Sq.Ft" name='unit' class='form-control' readonly></td>
+                    <td><input type='number' class='form-control quantity' name='quantity[]' min="0" step="0.0001" required></td>
+                    <td><input type='number' class='form-control rate' name='rate[]' min="0" step="0.0001" required></td>
+                    <td><input type='number' class='form-control amount' name='amount[]' readonly></td>
+                    <td><input type='button' value='x' class='btn btn-danger btn-sm btn-row-remove'></td>
+                </tr>
+            </tbody>
+        </table>
+        <table class='table table-bordered '>
+            <tbody>
+                <tr>
+                    <td><button type="button" id="addRow" class='btn btn-primary btn-sm'>Add Row</button></td>
+                    <td><b>Grand total</b></td>
+                    <td><input type='text' name='grand_total' id='grand_total' class='form-control' required readonly></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="submit" class='btn btn-success float-right'>Save and Generate PDF</button>
+    </form>
+    <script>
+        $(document).ready(function(){
+            calculateTotal();
+    
+            $("#productRows").on('input', 'input[name^="rate[]"], input[name^="quantity[]"]', function(){
+                calculateTotal();
+            });
+    
+            $("#productRows").on('click', '.btn-row-remove', function(){
+                $(this).closest('tr').remove();
+                calculateTotal();
+            });
+    
+            $("#addRow").click(function() {
+                const newRow = `
+                    <tr>
+                    <td><input  class='form-control'type="number" name="sr_no[]" id="" required></td>
+                    <td><textarea class='form-control' name="productName[]" rows="2" required onkeydown="if(event.keyCode===13){event.preventDefault();moveCursor(this, 1);}"></textarea></td>
+                    <td><input type="text" class='form-control' name="sacNo[]" required></td>
+                    <td><input type='text' value="Sq.Ft" name='unit' class='form-control' readonly></td>
+                    <td><input type='number' class='form-control quantity' name='quantity[]' min="0" step="0.0001" required></td>
+                    <td><input type='number' class='form-control rate' name='rate[]' min="0" step="0.0001" required></td>
+                    <td><input type='number' class='form-control amount' name='amount[]' readonly></td>
+                    <td><input type='button' value='x' class='btn btn-danger btn-sm btn-row-remove'></td>
+                    </tr>
+                `;
+                $("#productRows").append(newRow);
+                
+            });
+        });
+    
+        function calculateTotal() {
+            $("#productRows tr").each(function(){
+                var rate = parseFloat($(this).find('input[name^="rate[]"]').val()) || 0;
+                var quantity = parseFloat($(this).find('input[name^="quantity[]"]').val()) || 1;
+                var total = rate * quantity;
+                var amountField = $(this).find('.amount');
+                amountField.val(total.toFixed(4)); // Update amount field
+            });
+            updateGrandTotal();
+        }
+    
+        function updateGrandTotal() {
+            let total = 0;
+            $(".amount").each(function(){
+                total += parseFloat($(this).val()) || 0;
+            });
+            $('#grand_total').val(total.toFixed(4));
+        }
+
+        $(document).ready(function(){
+                // Define a map of work orders to their corresponding work dates
+                const workOrders = {
+                    'work_order_1': { date: '06/09/2023', number: '99' },
+                    'work_order_2': { date: '21/08/2023', number: '315' },
+                    'work_order_3': { date: '13/09/2023', number: '328' }
+                };
+
+                // Function to update work date and work order number when work order changes
+                $('#work_order').change(function() {
+                    const selectedWorkOrder = $(this).val();
+                    const selectedWorkOrderData = workOrders[selectedWorkOrder];
+                    $('#work_date').val(selectedWorkOrderData.date);
+                    $('#work_order_number').val(selectedWorkOrderData.number);
+                });
+
+                $('#work_order').change();
+            });
+        
+        $(function() {
+            $("#datepicker").datepicker({ dateFormat: 'dd/mm/yy' });
+         });
+        $(function() {
+            $("#datepicker").datepicker({ dateFormat: 'dd/mm/yy' });
+         });
+        
+
+$(document).ready(function(){
+    // Define a map of site names to their corresponding addresses
+    const siteAddresses = {
+        'NYATI EMERALD I': 'S. No. 55/2 (Part) and S.No.55/4(Part) of Village Baner, Taluka Haveli, Dist- Pune',
+        'NYATI EQUINOX I': 'S. No. 35/1/1/B + 48/2/C, 48/2/C, (Part A) Bavdhan Taluka- Mulashi, Dist- Pune',
+        'site_3': 'Address 3'
+    };
+
+    // Function to update site address when site name changes
+    $('#site_name').change(function() {
+        const selectedSiteName = $(this).val();
+        const selectedSiteAddress = siteAddresses[selectedSiteName];
+        $('#site_address').val(selectedSiteAddress);
+    });
+
+    // Trigger change event initially to fill in the address for the default site name
+    $('#site_name').change();
+});
+
+$(document).ready(function(){
+    // Define a map of customer names to their corresponding details
+    const customerDetails = {
+        'Nyati Builders Pvt Ltd.': {
+            address: 'Nyati Unitree, Nagar Road, Pune 411006',
+            gstin: '27AAACN6418N1Z4',
+            state: 'Maharashtra',
+            hsn: '9954 CONSTRUCTION SERVICES',
+            pan: 'AAACN6418N'
+        },
+        'Mihir Homes Enterprise LLP': {
+            address: 'Nyati Unitree Nagar Road Pune 411006',
+            gstin: '27ABBFM8951G2Z0',
+            state: 'Maharashtra',
+            hsn: '9954 CONSTRUCTION SERVICES',
+            pan: '-'
+        },
+        'customer_3': {
+            address: 'Address 3',
+            gstin: 'GSTIN3',
+            state: 'State 3',
+            hsn: 'HSN3',
+            pan: 'PAN3'
+        }
+    };
+
+    // Function to update customer details when customer name changes
+    $('#customer_name').change(function() {
+        const selectedCustomerName = $(this).val();
+        const selectedCustomerDetails = customerDetails[selectedCustomerName];
+        $('#caddress').val(selectedCustomerDetails.address);
+        $('#cgst').val(selectedCustomerDetails.gstin);
+        $('#cstate').val(selectedCustomerDetails.state);
+        $('#chsn').val(selectedCustomerDetails.hsn);
+        $('#cpan').val(selectedCustomerDetails.pan);
+    });
+
+    // Trigger change event initially to fill in the details for the default customer name
+    $('#customer_name').change();
+});
+
+function moveCursor(textarea, linesToMove) {
+                let caretPos = textarea.selectionStart;
+                let text = textarea.value;
+                let lineBreaksBeforeCaret = text.substr(0, caretPos).split("\n").length - 1;
+                let totalLines = text.split("\n").length;
+
+                if (lineBreaksBeforeCaret < totalLines - linesToMove) {
+                    let lines = text.split("\n");
+                    let start = 0;
+                    for (let i = 0; i < totalLines - linesToMove; i++) {
+                        start += lines[i].length + 1; // +1 to account for the newline character
+                    }
+                    let end = start + lines[totalLines - linesToMove].length;
+                    textarea.setSelectionRange(end, end);
+                }
+            }
+        
+    </script>
+</body>
+</html>
